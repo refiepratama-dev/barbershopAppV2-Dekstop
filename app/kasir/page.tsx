@@ -12,6 +12,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, UserCheck, ShieldCheck, KeyRound } from "lucide-react";
 
 type Kasir = {
@@ -29,6 +36,7 @@ export default function KasirPage() {
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"kasir" | "owner">("kasir");
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -62,6 +70,7 @@ export default function KasirPage() {
     setNama("");
     setEmail("");
     setPassword("");
+    setRole("kasir");
     setErrorMsg("");
     setShowDialog(true);
   }
@@ -92,14 +101,14 @@ export default function KasirPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${session?.access_token}`,
           },
-          body: JSON.stringify({ nama, email, password }),
+          body: JSON.stringify({ nama, email, password, role }),
         }
       );
 
       const result = await res.json();
 
       if (!res.ok) {
-        setErrorMsg(result.error ?? "Gagal membuat kasir");
+        setErrorMsg(result.error ?? "Gagal membuat pengguna");
         setSaving(false);
         return;
       }
@@ -136,11 +145,11 @@ export default function KasirPage() {
       {/* Header Top */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-[#111111] tracking-tight">
-            Manajemen Kasir
+          <h1 className="text-2xl font-bold tracking-tight">
+            Manajemen Pengguna
           </h1>
-          <p className="text-xs text-gray-500 font-medium mt-0.5">
-            Kelola daftar akun barber
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Kelola akun Kasir dan Owner
           </p>
         </div>
         <Button
@@ -148,7 +157,7 @@ export default function KasirPage() {
           className="bg-[#3138E8] hover:bg-[#252bc0] text-white rounded-full px-5 py-2.5 font-bold text-xs transition-all flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
-          Tambah Kasir
+          Tambah USer
         </Button>
       </div>
 
@@ -201,7 +210,7 @@ export default function KasirPage() {
       <div className="bg-white rounded-[30px] p-6 border border-slate-100">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-bold text-[#111111]">
-            Daftar Akun Kasir
+            Daftar Akun Pengguna
           </h2>
           <span className="text-[10px] font-bold bg-[#BEF264] text-black px-3 py-1 rounded-full">
             {kasirList.length} Akun Terdaftar
@@ -212,7 +221,7 @@ export default function KasirPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 text-[11px] font-bold text-gray-500 rounded-[14px]">
-                <th className="py-3 px-4 rounded-l-[14px]">Nama Kasir</th>
+                <th className="py-3 px-4 rounded-l-[14px]">Nama Pengguna</th>
                 <th className="py-3 px-4">Email Hak Akses</th>
                 <th className="py-3 px-4 text-right rounded-r-[14px]">
                   Role Akses
@@ -226,7 +235,7 @@ export default function KasirPage() {
                     colSpan={3}
                     className="text-center py-10 text-gray-400 font-medium"
                   >
-                    Belum ada akun kasir yang terdaftar.
+                    Belum ada akun yang terdaftar.
                   </td>
                 </tr>
               ) : (
@@ -264,11 +273,9 @@ export default function KasirPage() {
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="rounded-[28px] border-none sm:max-w-[425px] p-6 bg-white">
           <DialogHeader className="mb-2">
-            <DialogTitle className="text-lg font-black text-[#111111]">
-              Tambah Kasir Baru
-            </DialogTitle>
+            <DialogTitle>Tambah User Baru</DialogTitle>
             <p className="text-xs text-gray-400 font-medium">
-              Buat kredensial akun baru untuk kasir barbershop.
+              Buat kredensial akun baru untuk Kasir atau Owner barbershop.
             </p>
           </DialogHeader>
 
@@ -315,6 +322,29 @@ export default function KasirPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="rounded-xl border-slate-200 focus:border-[#3138E8] text-xs h-10 font-medium text-gray-900"
               />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="role" className="text-xs font-bold text-gray-700">
+                Role
+              </Label>
+              <Select
+                value={role}
+                onValueChange={(v) =>
+                  setRole((v ?? "kasir") as "kasir" | "owner")
+                }
+              >
+                <SelectTrigger
+                  id="role"
+                  className="rounded-xl border-slate-200 focus:border-[#3138E8] text-xs h-10 font-medium text-gray-900"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="kasir">Kasir</SelectItem>
+                  <SelectItem value="owner">Owner</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {errorMsg && (

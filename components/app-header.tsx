@@ -6,19 +6,22 @@ import { supabase } from "@/lib/supabase";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 
-const PAGE_LABELS: Record<string, string> = {
-  "/": "Dashboard",
-  "/katalog": "Manajemen Katalog",
-  "/barber": "Manajemen Barber",
-  "/kasir": "Manajemen Kasir",
-  "/laporan": "Laporan Harian",
-  "/tabungan": "Tabungan",
+// Pemetaan path ke Group dan Label halaman
+const PAGE_CONFIG: Record<string, { group: string; label: string }> = {
+  "/": { group: "Utama", label: "Dashboard" },
+  "/katalog": { group: "Data Master", label: "Manajemen Katalog" },
+  "/barber": { group: "Data Master", label: "Manajemen Barber" },
+  "/kasir": { group: "Data Master", label: "Manajemen User" },
+  "/laporan": { group: "Laporan", label: "Laporan" },
+  "/tabungan": { group: "Keuangan", label: "Tabungan" },
 };
 
 function getTodayDateWIB() {
   const now = new Date();
-  const offsetMs = now.getTimezoneOffset() * 60000;
-  const wib = new Date(now.getTime() - offsetMs);
+  // Menyesuaikan waktu lokal ke WIB (UTC+7)
+  const wibOffsetMs = 7 * 60 * 60 * 1000;
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const wib = new Date(utc + wibOffsetMs);
   return wib.toISOString().split("T")[0];
 }
 
@@ -42,7 +45,12 @@ export function AppHeader() {
     setLoading(false);
   }
 
-  const pageLabel = PAGE_LABELS[pathname] ?? "Halaman";
+  // Mengambil konfigurasi halaman berdasarkan pathname
+  const currentPage = PAGE_CONFIG[pathname] ?? {
+    group: "Halaman",
+    label: "Detail",
+  };
+
   const todayFormatted = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
     day: "2-digit",
@@ -56,9 +64,11 @@ export function AppHeader() {
       <div className="flex items-center gap-3">
         <SidebarTrigger />
         <span className="text-sm">
-          <span className="text-muted-foreground">Utama</span>
+          <span className="text-muted-foreground">{currentPage.group}</span>
           <span className="text-muted-foreground mx-1.5">/</span>
-          <span className="font-medium text-foreground">{pageLabel}</span>
+          <span className="font-medium text-foreground">
+            {currentPage.label}
+          </span>
         </span>
       </div>
 

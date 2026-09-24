@@ -35,7 +35,7 @@ const menuGroups = [
     items: [
       { title: "Manajemen Katalog", url: "/katalog", icon: Scissors },
       { title: "Manajemen Barber", url: "/barber", icon: Users },
-      { title: "Manajemen Kasir", url: "/kasir", icon: UserCog },
+      { title: "Manajemen User", url: "/kasir", icon: UserCog },
     ],
   },
   {
@@ -94,15 +94,15 @@ export function AppSidebar() {
                       <SidebarMenuButton
                         render={<Link href={item.url} />}
                         isActive={isActive}
-                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition-all duration-200 ${
+                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-xs transition-all duration-200 [&:hover_svg]:!text-slate-900 ${
                           isActive
-                            ? "bg-[#3138E8] text-white shadow-sm font-bold"
-                            : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                            ? "!bg-[#3138E8] !text-white font-bold"
+                            : "text-slate-600 hover:!bg-slate-100 hover:!text-slate-900"
                         }`}
                       >
                         <Icon
-                          className={`w-4 h-4 shrink-0 ${
-                            isActive ? "text-white" : "text-slate-500"
+                          className={`w-4 h-4 shrink-0 transition-colors ${
+                            isActive ? "!text-white" : "text-slate-500"
                           }`}
                         />
                         <span>{item.title}</span>
