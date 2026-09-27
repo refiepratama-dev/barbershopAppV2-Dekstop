@@ -44,6 +44,13 @@ type TabunganTx = {
   created_at: string;
 };
 
+// Helper Format Angka Ribuan
+const formatRupiah = (val: string) => {
+  const numberString = val.replace(/[^0-9]/g, "");
+  if (!numberString) return "";
+  return new Intl.NumberFormat("id-ID").format(Number(numberString));
+};
+
 export default function TabunganPage() {
   const [loading, setLoading] = useState(true);
   const [tabunganList, setTabunganList] = useState<Tabungan[]>([]);
@@ -183,7 +190,11 @@ export default function TabunganPage() {
 
   async function handleSaveTx() {
     if (!selected) return;
-    const nominalNumber = Number(txNominal);
+
+    // Membersihkan karakter non-angka agar siap dikonversi ke Number
+    const rawNominal = txNominal.replace(/[^0-9]/g, "");
+    const nominalNumber = Number(rawNominal);
+
     if (!nominalNumber || nominalNumber <= 0) {
       alert("Nominal harus lebih dari 0");
       return;
@@ -558,15 +569,22 @@ export default function TabunganPage() {
                 htmlFor="nominal"
                 className="text-xs font-bold text-gray-700"
               >
-                Nominal (Rp)
+                Nominal
               </Label>
-              <Input
-                id="nominal"
-                type="number"
-                value={txNominal}
-                onChange={(e) => setTxNominal(e.target.value)}
-                className="rounded-xl border-slate-200 focus:border-[#3138E8] text-xs h-10 font-medium text-gray-900"
-              />
+              <div className="relative flex items-center">
+                <span className="absolute left-3 text-xs font-bold text-gray-400 z-10">
+                  Rp
+                </span>
+                <Input
+                  id="nominal"
+                  type="text"
+                  inputMode="numeric"
+                  value={txNominal}
+                  onChange={(e) => setTxNominal(formatRupiah(e.target.value))}
+                  placeholder="0"
+                  className="pl-9 rounded-xl border-slate-200 focus:border-[#3138E8] text-xs h-10 font-medium text-gray-900"
+                />
+              </div>
             </div>
 
             <div className="space-y-1.5">
