@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Button } from "@/components/ui/button";
 import {
   Calendar,
   TrendingUp,
@@ -13,6 +12,7 @@ import {
   PieChart,
   ChevronRight,
   Wallet,
+  Receipt,
 } from "lucide-react";
 
 type ShiftTutup = {
@@ -24,6 +24,13 @@ type ShiftTutup = {
 
 type KomisiBarber = { nama: string; omzet: number; komisi: number };
 
+type ItemPengeluaran = {
+  id: string;
+  keterangan: string;
+  nominal: number;
+  created_at: string;
+};
+
 type DetailLaporan = {
   omzetLayanan: number;
   omzetProduk: number;
@@ -33,6 +40,7 @@ type DetailLaporan = {
   kasKeluar: number;
   labaBersih: number;
   komisiPerBarber: KomisiBarber[];
+  daftarPengeluaran: ItemPengeluaran[];
 };
 
 function getRangeUTC(tanggal: string) {
@@ -113,9 +121,10 @@ export default function LaporanPage() {
           .lte("created_at", end),
         supabase
           .from("pengeluaran")
-          .select("nominal")
+          .select("id, keterangan, nominal, created_at")
           .gte("created_at", start)
-          .lte("created_at", end),
+          .lte("created_at", end)
+          .order("created_at", { ascending: false }),
       ]);
 
       let omzetLayanan = 0;
@@ -150,8 +159,11 @@ export default function LaporanPage() {
         });
       });
 
-      const kasKeluar =
-        pengeluaran?.reduce((sum, p) => sum + p.nominal, 0) ?? 0;
+      const daftarPengeluaran: ItemPengeluaran[] = pengeluaran ?? [];
+      const kasKeluar = daftarPengeluaran.reduce(
+        (sum, p) => sum + p.nominal,
+        0
+      );
       const totalOmzet = omzetLayanan + omzetProduk;
 
       setDetail({
@@ -163,6 +175,7 @@ export default function LaporanPage() {
         kasKeluar,
         labaBersih: totalOmzet - totalKomisi - kasKeluar,
         komisiPerBarber: Object.values(komisiMap),
+        daftarPengeluaran,
       });
     } catch (err) {
       console.error("Error fetching detail laporan:", err);
@@ -177,6 +190,13 @@ export default function LaporanPage() {
       day: "2-digit",
       month: "long",
       year: "numeric",
+    });
+  }
+
+  function formatWaktu(isoString: string) {
+    return new Date(isoString).toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
@@ -200,8 +220,8 @@ export default function LaporanPage() {
           Laporan Kasir & Omzet
         </h1>
         <p className="text-xs text-gray-500 font-medium mt-0.5">
-          Rekap harian keuangan, rincian per metode bayar, dan pembagian komisi
-          barber
+          Rekap harian keuangan, rincian per metode bayar, pengeluaran, dan
+          pembagian komisi barber
         </p>
       </div>
 
@@ -383,6 +403,46 @@ export default function LaporanPage() {
                       </span>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Card Rincian Pengeluaran Harian */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-bold text-gray-800 flex items-center gap-2">
+                    <Receipt className="w-4 h-4 text-red-500" />
+                    Rincian Pengeluaran Hari Ini
+                  </h3>
+                  <span className="text-xs font-black text-red-500">
+                    Total: Rp {detail.kasKeluar.toLocaleString("id-ID")}
+                  </span>
+                </div>
+
+                <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                  {detail.daftarPengeluaran.length === 0 ? (
+                    <p className="text-xs text-gray-400 font-medium italic py-3 text-center bg-slate-50/50 rounded-[20px] border border-slate-100">
+                      Tidak ada catatan pengeluaran pada shift ini.
+                    </p>
+                  ) : (
+                    detail.daftarPengeluaran.map((p) => (
+                      <div
+                        key={p.id}
+                        className="flex justify-between items-center bg-red-50/30 p-3 rounded-[20px] border border-red-100/60 text-xs"
+                      >
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-bold text-gray-900 capitalize">
+                            {p.keterangan || "Pengeluaran Kas"}
+                          </span>
+                          <span className="text-[10px] text-gray-400 font-medium">
+                            {formatWaktu(p.created_at)} WIB
+                          </span>
+                        </div>
+                        <span className="font-black text-red-600 text-sm">
+                          - Rp {p.nominal.toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 

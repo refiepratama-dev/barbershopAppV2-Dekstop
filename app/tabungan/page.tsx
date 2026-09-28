@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
+  SelectGroup,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -67,7 +68,7 @@ export default function TabunganPage() {
 
   // Dialog Tambah Transaksi
   const [showTxDialog, setShowTxDialog] = useState(false);
-  const [txTipe, setTxTipe] = useState<"setor" | "tarik">("setor");
+  const [txTipe, setTxTipe] = useState<string>("");
   const [txNominal, setTxNominal] = useState("");
   const [txKeterangan, setTxKeterangan] = useState("");
 
@@ -182,7 +183,7 @@ export default function TabunganPage() {
   }
 
   function openTambahTx() {
-    setTxTipe("setor");
+    setTxTipe("");
     setTxNominal("");
     setTxKeterangan("");
     setShowTxDialog(true);
@@ -191,7 +192,11 @@ export default function TabunganPage() {
   async function handleSaveTx() {
     if (!selected) return;
 
-    // Membersihkan karakter non-angka agar siap dikonversi ke Number
+    if (!txTipe) {
+      alert("Silakan pilih jenis transaksi terlebih dahulu");
+      return;
+    }
+
     const rawNominal = txNominal.replace(/[^0-9]/g, "");
     const nominalNumber = Number(rawNominal);
 
@@ -363,8 +368,7 @@ export default function TabunganPage() {
                   <Button
                     variant="outline"
                     onClick={() => handleDeleteTabungan(selected)}
-                    className="rounded-full border-red-100 text-xs font-bold text-red-600 hover:bg-red-50 h-9 px-3"
-                  >
+                    className="rounded-full border-red-100 text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-600 h-9 px-3">
                     <Trash2 className="h-3.5 w-3.5 mr-1.5" />
                     Hapus
                   </Button>
@@ -541,25 +545,26 @@ export default function TabunganPage() {
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 w-full">
+              {/* 1. Label Teks di Bagian Atas */}
               <Label htmlFor="tipe" className="text-xs font-bold text-gray-700">
                 Jenis Transaksi
               </Label>
-              <Select
-                value={txTipe}
-                onValueChange={(v) =>
-                  setTxTipe((v ?? "setor") as "setor" | "tarik")
-                }
-              >
+
+              <Select value={txTipe} onValueChange={(v) => setTxTipe(v)}>
+                {/* 2. Warna Placeholder dibuat Muted (data-[placeholder]:text-gray-400) */}
                 <SelectTrigger
                   id="tipe"
-                  className="rounded-xl border-slate-200 text-xs h-10 font-medium"
+                  className="w-full rounded-xl border-slate-200 text-xs h-10 font-medium text-gray-900 capitalize data-[placeholder]:text-gray-400 data-[placeholder]:normal-case"
                 >
-                  <SelectValue />
+                  <SelectValue placeholder="Pilih Transaksi" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl">
-                  <SelectItem value="setor">Setor (Tambah Saldo)</SelectItem>
-                  <SelectItem value="tarik">Tarik (Kurangi Saldo)</SelectItem>
+                <SelectContent position="popper" className="rounded-xl">
+                  <SelectGroup>
+                    {/* 3. Teks di dalam SelectItem diawali Huruf Kapital */}
+                    <SelectItem value="setor">Setor</SelectItem>
+                    <SelectItem value="tarik">Tarik</SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
@@ -572,8 +577,13 @@ export default function TabunganPage() {
                 Nominal
               </Label>
               <div className="relative flex items-center">
-                <span className="absolute left-3 text-xs font-bold text-gray-400 z-10">
-                  Rp
+                {/* Ubah className pada span di bawah ini */}
+                <span
+                  className={`absolute left-3 text-xs font-medium z-10 transition-colors ${
+                    txNominal ? "text-gray-900" : "text-gray-400"
+                  }`}
+                >
+                  Rp.
                 </span>
                 <Input
                   id="nominal"
@@ -582,7 +592,7 @@ export default function TabunganPage() {
                   value={txNominal}
                   onChange={(e) => setTxNominal(formatRupiah(e.target.value))}
                   placeholder="0"
-                  className="pl-9 rounded-xl border-slate-200 focus:border-[#3138E8] text-xs h-10 font-medium text-gray-900"
+                  className="pl-9 rounded-xl border-slate-200 focus:border-[#3138E8] text-xs h-10 font-medium text-gray-900 placeholder:text-gray-400"
                 />
               </div>
             </div>

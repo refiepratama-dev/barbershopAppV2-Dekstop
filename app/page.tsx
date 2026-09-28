@@ -646,7 +646,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <h2 className="text-sm font-bold text-[#111111]">
-              Kas Keluar Kasir Hari Ini
+              Pengeluaran Hari Ini
             </h2>
             <span className="text-[10px] font-bold bg-red-100 text-[#DC2626] px-2.5 py-0.5 rounded-full">
               {pengeluaranList.length} Catatan
