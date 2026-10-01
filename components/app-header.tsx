@@ -13,6 +13,7 @@ const PAGE_CONFIG: Record<string, { group: string; label: string }> = {
   "/barber": { group: "Data Master", label: "Manajemen Barber" },
   "/kasir": { group: "Data Master", label: "Manajemen User" },
   "/laporan": { group: "Laporan", label: "Laporan" },
+  "/pengeluaran-operasional": { group: "Keuangan", label: "Pengeluaran" },
   "/tabungan": { group: "Keuangan", label: "Tabungan" },
 };
 

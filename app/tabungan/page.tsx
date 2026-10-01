@@ -368,7 +368,8 @@ export default function TabunganPage() {
                   <Button
                     variant="outline"
                     onClick={() => handleDeleteTabungan(selected)}
-                    className="rounded-full border-red-100 text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-600 h-9 px-3">
+                    className="rounded-full border-red-100 text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-600 h-9 px-3"
+                  >
                     <Trash2 className="h-3.5 w-3.5 mr-1.5" />
                     Hapus
                   </Button>
@@ -551,7 +552,7 @@ export default function TabunganPage() {
                 Jenis Transaksi
               </Label>
 
-              <Select value={txTipe} onValueChange={(v) => setTxTipe(v)}>
+              <Select value={txTipe} onValueChange={(v) => setTxTipe(v ?? "")}>
                 {/* 2. Warna Placeholder dibuat Muted (data-[placeholder]:text-gray-400) */}
                 <SelectTrigger
                   id="tipe"
@@ -559,7 +560,7 @@ export default function TabunganPage() {
                 >
                   <SelectValue placeholder="Pilih Transaksi" />
                 </SelectTrigger>
-                <SelectContent position="popper" className="rounded-xl">
+                <SelectContent className="rounded-xl">
                   <SelectGroup>
                     {/* 3. Teks di dalam SelectItem diawali Huruf Kapital */}
                     <SelectItem value="setor">Setor</SelectItem>

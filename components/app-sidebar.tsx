@@ -9,6 +9,7 @@ import {
   UserCog,
   FileText,
   PiggyBank,
+  Wallet,
   LogOut,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -42,9 +43,13 @@ const menuGroups = [
     label: "Laporan",
     items: [{ title: "Laporan", url: "/laporan", icon: FileText }],
   },
+  // Kode yang BENAR:
   {
     label: "Keuangan",
-    items: [{ title: "Tabungan", url: "/tabungan", icon: PiggyBank }],
+    items: [
+      { title: "Pengeluaran", url: "/pengeluaran-operasional", icon: Wallet },
+      { title: "Tabungan", url: "/tabungan", icon: PiggyBank },
+    ],
   },
 ];
 
