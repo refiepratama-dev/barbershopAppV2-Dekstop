@@ -85,6 +85,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Masukan Email "
                 className="pl-11 h-12 rounded-2xl border-slate-200 bg-slate-50/50 text-xs font-medium focus-visible:ring-[#3138E8] focus-visible:bg-white transition-all shadow-none"
               />
             </div>
@@ -104,6 +105,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Masukan Password"
                 className="pl-11 h-12 rounded-2xl border-slate-200 bg-slate-50/50 text-xs font-medium focus-visible:ring-[#3138E8] focus-visible:bg-white transition-all shadow-none"
               />
             </div>

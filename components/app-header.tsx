@@ -76,7 +76,13 @@ export function AppHeader() {
       {/* Status toko + Tanggal — kanan */}
       <div className="flex items-center gap-3">
         {!loading && (
-          <Badge className="rounded-full px-4 py-1.5 bg-black text-white hover:bg-black">
+          <Badge
+            className={`rounded-full px-4 py-1.5 hover:opacity-90 font-semibold ${
+              tokoBuka
+                ? "bg-[#BEF264] text-black hover:bg-[#BEF264]"
+                : "bg-black text-white hover:bg-black"
+            }`}
+          >
             {tokoBuka ? "Toko Buka" : "Toko Tutup"}
           </Badge>
         )}

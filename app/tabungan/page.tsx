@@ -183,7 +183,7 @@ export default function TabunganPage() {
   }
 
   function openTambahTx() {
-    setTxTipe("");
+    setTxTipe("setor");
     setTxNominal("");
     setTxKeterangan("");
     setShowTxDialog(true);
